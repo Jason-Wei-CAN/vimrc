@@ -1,0 +1,505 @@
+" -----------------------------------------------------------------------------  
+" |                            VIM Settings                                   |
+" |                   (see gvimrc for gui vim settings)                       |
+" |                                                                           |
+" | Some highlights:                                                          |
+" |   jj = <esc>  Very useful for keeping your hands on the home row          |
+" |   ,n = toggle NERDTree off and on                                         |
+" |                                                                           |
+" |   ,f = fuzzy find all files                                               |
+" |   ,b = fuzzy find in all buffers                                          |
+" |   ,p = go to previous file                                                |
+" |                                                                           |
+" |   hh = inserts '=>'                                                       |
+" |   aa = inserts '@'                                                        |
+" |                                                                           |
+" |   ,h = new horizontal window                                              |
+" |   ,v = new vertical window                                                |
+" |                                                                           |
+" |   ,i = toggle invisibles                                                  |
+" |                                                                           |
+" |   enter and shift-enter = adds a new line after/before the current line   |
+" |                                                                           |
+" |   :call Tabstyle_tabs = set tab to real tabs                              |
+" |   :call Tabstyle_spaces = set tab to 2 spaces                             |
+" |                                                                           |
+" | Put machine/user specific settings in ~/.vimrc.local                      |
+" -----------------------------------------------------------------------------  
+
+
+set nocompatible
+let mapleader = ","
+imap jj <Esc> " Professor VIM says '87% of users prefer jj over esc', jj abrams disagrees
+
+
+" Tabs ************************************************************************
+"set sta " a <Tab> in an indent inserts 'shiftwidth' spaces
+
+function! Tabstyle_tabs()
+  " Using 4 column tabs
+  set softtabstop=4
+  set shiftwidth=4
+  set tabstop=4
+  set noexpandtab
+  autocmd User Rails set softtabstop=4
+  autocmd User Rails set shiftwidth=4
+  autocmd User Rails set tabstop=4
+  autocmd User Rails set noexpandtab
+endfunction
+
+function! Tabstyle_spaces()
+  " Use 2 spaces
+  set softtabstop=2
+  set shiftwidth=2
+  set tabstop=2
+  set expandtab
+endfunction
+
+call Tabstyle_spaces()
+
+
+" Indenting *******************************************************************
+set ai " Automatically set the indent of a new line (local to buffer)
+set si " smartindent (local to buffer)
+
+
+" Scrollbars ******************************************************************
+set sidescrolloff=2
+set numberwidth=4
+
+
+" Windows *********************************************************************
+set equalalways " Multiple windows, when created, are equal in size
+set splitbelow splitright
+
+" Vertical and horizontal split then hop to a new buffer
+:noremap <Leader>v :vsp^M^W^W<cr>
+:noremap <Leader>h :split^M^W^W<cr>
+
+
+" Cursor highlights ***********************************************************
+set cursorline
+"set cursorcolumn
+
+
+" Searching *******************************************************************
+set hlsearch  " highlight search
+set incsearch  " Incremental search, search as you type
+set ignorecase " Ignore case when searching 
+set smartcase " Ignore case when searching lowercase
+
+
+" Colors **********************************************************************
+"set t_Co=256 " 256 colors
+set background=dark 
+syntax on " syntax highlighting
+" colorscheme ir_black
+colorscheme navajo-night
+
+
+" Status Line *****************************************************************
+" set showcmd
+" set ruler " Show ruler
+" set ch=2 " Make command line two lines high
+" match LongLineWarning '\%120v.*' " Error format when a line is longer than 120 
+
+" Returns true if paste mode is enabled
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    en
+    return ''
+endfunction
+
+" Always show the status line
+set laststatus=2
+" Format the status line
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ [%p%%]\ Line:\ %03l\ \Col:\ %03v
+
+
+" Line Wrapping ***************************************************************
+set nowrap
+set linebreak  " Wrap at word
+
+
+" Directories *****************************************************************
+" Setup backup location and enable
+"set backupdir=~/backup/vim
+"set backup
+
+" Set Swap directory
+"set directory=~/backup/vim/swap
+
+" Sets path to directory buffer was loaded from
+"autocmd BufEnter * lcd %:p:h
+
+
+" File Stuff ******************************************************************
+filetype plugin indent on
+" To show current filetype use: set filetype
+
+"autocmd FileType html :set filetype=xhtml
+
+
+" Insert New Line *************************************************************
+map <S-Enter> O<ESC> " awesome, inserts new line without going into insert mode
+map <Enter> o<ESC>
+"set fo-=r " do not insert a comment leader after an enter, (no work, fix!!)
+
+
+" Sessions ********************************************************************
+" Sets what is saved when you save a session
+set sessionoptions=blank,buffers,curdir,folds,help,resize,tabpages,winsize
+
+
+" Invisible characters *********************************************************
+set listchars=trail:.,tab:>-,eol:$
+set nolist
+:noremap <Leader>i :set list!<CR> " Toggle invisible chars
+
+
+" Mouse ***********************************************************************
+"set mouse=a " Enable the mouse
+"behave xterm
+"set selectmode=mouse
+
+
+" Misc settings ***************************************************************
+set backspace=indent,eol,start
+set number " Show line numbers
+set matchpairs+=<:>
+set vb t_vb= " Turn off bell, this could be more annoying, but I'm not sure how
+set nofoldenable " Turn off folding 
+
+
+" Navigation ******************************************************************
+
+" Make cursor move by visual lines instead of file lines (when wrapping)
+map <up> gk
+map k gk
+imap <up> <C-o>gk
+map <down> gj
+map j gj
+imap <down> <C-o>gj
+map E ge
+
+map <Leader>p <C-^> " Go to previous file
+
+
+" Ruby stuff ******************************************************************
+"compiler ruby         " Enable compiler support for ruby
+"map <F5> :!ruby %<CR>
+
+
+" Omni Completion *************************************************************
+autocmd FileType html :set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType c set omnifunc=ccomplete#Complete
+" May require ruby compiled in
+autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete 
+
+
+" Hard to type *****************************************************************
+imap uu _
+imap hh =>
+imap aa @
+
+
+" -----------------------------------------------------------------------------  
+" |                              Plug-ins                                     |
+" -----------------------------------------------------------------------------  
+
+" NERDTree ********************************************************************
+:noremap <Leader>n :NERDTreeToggle<CR>
+let NERDTreeHijackNetrw=1 " User instead of Netrw when doing an edit /foobar
+let NERDTreeMouseMode=1 " Single click for everything
+
+
+" NERD Commenter **************************************************************
+let NERDCreateDefaultMappings=0 " I turn this off to make it simple
+
+" Toggle commenting on 1 line or all selected lines. Wether to comment or not
+" is decided based on the first line; if it's not commented then all lines
+" will be commented
+:map <Leader>c :call NERDComment(0, "toggle")<CR> 
+
+
+" SnippetsEmu *****************************************************************
+"imap <unique> <C-j> <Plug>Jumper
+"let g:snip_start_tag = "_\."
+"let g:snip_end_tag = "\._"
+"let g:snip_elem_delim = ":"
+"let g:snip_set_textmate_cp = '1'  " Tab to expand snippets, not automatically.
+
+
+" CommandT ********************************************************
+  " To compile:
+  " cd ~/cl/etc/vim/ruby/command-t
+  " ruby extconf.rb
+  " make
+let g:CommandTMatchWindowAtTop = 1
+map <Leader>f :CommandT<CR>
+
+
+" fuzzyfinder ********************************************************
+" I'm using CommandT for main searching, but it doesn't do buffers, so I'm
+" using FuzzyFinder for that
+map <Leader>b :FufBuffer<CR>
+"let g:fuzzy_ignore = '.o;.obj;.bak;.exe;.pyc;.pyo;.DS_Store;.db'
+
+
+" autocomplpop ***************************************************************
+" complete option
+"set complete=.,w,b,u,t,k
+"let g:AutoComplPop_CompleteOption = '.,w,b,u,t,k'
+"set complete=.
+let g:AutoComplPop_IgnoreCaseOption = 0
+let g:AutoComplPop_BehaviorKeywordLength = 2
+
+
+" railsvim ***************************************************************
+map <Leader>ra :AS<CR>
+map <Leader>rs :RS<CR>
+
+
+" -----------------------------------------------------------------------------  
+" |                             OS Specific                                   |
+" |                      (GUI stuff goes in gvimrc)                           |
+" -----------------------------------------------------------------------------  
+
+" Mac *************************************************************************
+"if has("mac") 
+  "" 
+"endif
+ 
+" Windows *********************************************************************
+"if has("gui_win32")
+  "" 
+"endif
+
+
+
+" -----------------------------------------------------------------------------  
+" |                               Startup                                     |
+" -----------------------------------------------------------------------------  
+" Open NERDTree on start
+"autocmd VimEnter * exe 'NERDTree' | wincmd l 
+
+
+
+" -----------------------------------------------------------------------------  
+" |                               Host specific                               |
+" -----------------------------------------------------------------------------  
+if filereadable(expand("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
+
+"if hostname() == "foo"
+  " do something
+"endif
+
+" Example .vimrc.local:
+
+"call Tabstyle_tabs()
+"colorscheme ir_dark
+"match LongLineWarning '\%120v.*'
+
+"autocmd User ~/git/some_folder/* call Tabstyle_spaces() | let g:force_xhtml=1
+
+" -----------------------------------------------------------------------------  
+" |                               Cscope                                      |
+" -----------------------------------------------------------------------------  
+set cinoptions=:.5s,>1s,p0,t0,(0,g2	" :.5s = indent case statements 1/2 shiftwidth
+					" >1s = indent 1 shiftwidth
+					" p0 = indent function definitions 0 spaces
+					" t0 = indent function return type 0 spaces
+					" (0 = indent from unclosed parantheses
+					" g2 = indent C++ scope resolution 2 spaces
+
+set cinwords=if,else,while,do,for,switch,case	" Which keywords should indent 
+
+set formatoptions=tcqor	" t=text, c=comments, q=format with "gq", o,r=autoinsert comment leader
+set cindent				" indent on cinwords
+set shiftwidth=4		" set shiftwidth to 4 spaces
+set tabstop=4			" set tab to 4 spaces
+set showmatch			" Show matching brackets/braces/parantheses.
+set showcmd				" Show (partial) command in status line.
+set autowrite			" Automatically save before commands like :next and :make
+syntax on
+
+:function! License_notice(file_name)
+: let path_file_name = g:VIM_CUSTOM . a:file_name
+:  :execute 'r ' . path_file_name
+:endfunction
+
+" Cleanup
+function! Clean_up()
+set visualbell&
+set cinoptions&
+set cinwords&
+set formatoptions&
+set cindent&	
+set shiftwidth&
+set tabstop&
+set showmatch&
+set background&
+set showcmd&
+set autowrite&
+set textwidth&
+endfunction
+
+function! LoadCscope()
+  let db = findfile("cscope.out", ".;")
+  if (!empty(db))
+    let path = strpart(db, 0, match(db, "/cscope.out$"))
+    set nocscopeverbose " suppress 'duplicate connection' error
+    exe "cs add " . db . " " . path
+    set cscopeverbose
+  endif
+endfunction
+
+" This tests to see if vim was configured with the '--enable-cscope' option
+" when it was compiled.  If it wasn't, time to recompile vim... 
+if has("cscope")
+
+    """"""""""""" Standard cscope/vim boilerplate
+
+    " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
+    set cscopetag
+
+    " check cscope for definition of a symbol before checking ctags: set to 1
+    " if you want the reverse search order.
+    set csto=0
+
+    " add any cscope database in current directory
+    if filereadable("cscope.out")
+        cs add cscope.out  
+    " else add the database pointed to by environment variable 
+    elseif $CSCOPE_DB != ""
+        cs add $CSCOPE_DB
+    else 
+        call LoadCscope()
+    endif
+
+    " show msg when any other cscope db added
+    set cscopeverbose  
+
+
+    """"""""""""" My cscope/vim key mappings
+    "
+    " The following maps all invoke one of the following cscope search types:
+    "
+    "   's'   symbol: find all references to the token under cursor
+    "   'g'   global: find global definition(s) of the token under cursor
+    "   'c'   calls:  find all calls to the function name under cursor
+    "   't'   text:   find all instances of the text under cursor
+    "   'e'   egrep:  egrep search for the word under cursor
+    "   'f'   file:   open the filename under cursor
+    "   'i'   includes: find files that include the filename under cursor
+    "   'd'   called: find functions that function under cursor calls
+    "
+    " Below are three sets of the maps: one set that just jumps to your
+    " search result, one that splits the existing vim window horizontally and
+    " diplays your search result in the new window, and one that does the same
+    " thing, but does a vertical split instead (vim 6 only).
+    "
+    " I've used CTRL-\ and CTRL-@ as the starting keys for these maps, as it's
+    " unlikely that you need their default mappings (CTRL-\'s default use is
+    " as part of CTRL-\ CTRL-N typemap, which basically just does the same
+    " thing as hitting 'escape': CTRL-@ doesn't seem to have any default use).
+    " If you don't like using 'CTRL-@' or CTRL-\, , you can change some or all
+    " of these maps to use other keys.  One likely candidate is 'CTRL-_'
+    " (which also maps to CTRL-/, which is easier to type).  By default it is
+    " used to switch between Hebrew and English keyboard mode.
+    "
+    " All of the maps involving the <cfile> macro use '^<cfile>$': this is so
+    " that searches over '#include <time.h>" return only references to
+    " 'time.h', and not 'sys/time.h', etc. (by default cscope will return all
+    " files that contain 'time.h' as part of their name).
+
+
+    " To do the first type of search, hit 'CTRL-\', followed by one of the
+    " cscope search types above (s,g,c,t,e,f,i,d).  The result of your cscope
+    " search will be displayed in the current window.  You can use CTRL-T to
+    " go back to where you were before the search.  
+    "
+
+    nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
+    nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>	
+
+
+    " Using 'CTRL-spacebar' (intepreted as CTRL-@ by vim) then a search type
+    " makes the vim window split horizontally, with search result displayed in
+    " the new window.
+    "
+    " (Note: earlier versions of vim may not have the :scs command, but it
+    " can be simulated roughly via:
+    "    nmap <C-@>s <C-W><C-S> :cs find s <C-R>=expand("<cword>")<CR><CR>	
+
+    nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR>	
+    nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>	
+    nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>	
+    nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>	
+
+
+    " Hitting CTRL-space *twice* before the search type does a vertical 
+    " split instead of a horizontal one (vim 6 and up only)
+    "
+    " (Note: you may wish to put a 'set splitright' in your .vimrc
+    " if you prefer the new window on the right instead of the left
+
+    nmap <C-@><C-@>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>	
+    nmap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>	
+    nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+
+
+    """"""""""""" key map timeouts
+    "
+    " By default Vim will only wait 1 second for each keystroke in a mapping.
+    " You may find that too short with the above typemaps.  If so, you should
+    " either turn off mapping timeouts via 'notimeout'.
+    "
+    "set notimeout 
+    "
+    " Or, you can keep timeouts, by uncommenting the timeoutlen line below,
+    " with your own personal favorite value (in milliseconds):
+    "
+    "set timeoutlen=4000
+    "
+    " Either way, since mapping timeout settings by default also set the
+    " timeouts for multicharacter 'keys codes' (like <F1>), you should also
+    " set ttimeout and ttimeoutlen: otherwise, you will experience strange
+    " delays as vim waits for a keystroke after you hit ESC (it will be
+    " waiting to see if the ESC is actually part of a key code like <F1>).
+    "
+    "set ttimeout 
+    "
+    " personally, I find a tenth of a second to work well for key code
+    " timeouts. If you experience problems and have a slow terminal or network
+    " connection, set it higher.  If you don't set ttimeoutlen, the value for
+    " timeoutlent (default: 1000 = 1 second, which is sluggish) is used.
+    "
+    "set ttimeoutlen=100
+
+endif
+
+
